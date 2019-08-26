@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tex/flutter_tex.dart';
 
-class NewRoute extends StatelessWidget {
+class Latex extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("New route"),
+        title: Text("latex demo"),
       ),
       body: Center(
         child: TeXView(teXHTML: teXHTML,),

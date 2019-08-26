@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sample/CounterRoute.dart';
 import 'package:flutter_sample/TipRoute.dart';
+import 'package:flutter_sample/BaseWidgets.dart';
+import 'package:flutter_sample/latex.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,13 +27,14 @@ class MyApp extends StatelessWidget {
       initialRoute: "/",
       // 注册app 命名路由表
       routes: {
-        "/": (BuildContext context) => MyHomePage(title: 'Flutter Demo Home Page'),
+        "/": (BuildContext context) =>
+            MyHomePage(title: 'Flutter Demo Home Page'),
         "new_page": (context) => TipRoute(text: '没有通过路由传参'),
         "new_page2": (context) {
           return TipRoute(text: ModalRoute.of(context).settings.arguments);
         }
       },
-      onGenerateRoute: (RouteSettings setting){
+      onGenerateRoute: (RouteSettings setting) {
         /**
          * 在打开命名路由时会可能会被调用，
          * 之所以说可能，是因为当调用Navigator.pushNamed(...)打开命名路由时，
@@ -39,13 +42,14 @@ class MyApp extends StatelessWidget {
          * 如果路由表中没有注册，才会调用onGenerateRoute来生成路由。
          * 用处，可做路由鉴权
          */
-        return MaterialPageRoute(
-          builder: (context){
-            String routerName = setting.name;
-            print(routerName);
-            return new Text(routerName);
-          }
-        );
+        return MaterialPageRoute(builder: (context) {
+          String routerName = setting.name;
+          Map<String, Widget> routerMap = {
+            'baseWidgets': BaseWidgets(),
+            'latex': Latex(),
+          };
+          return routerMap[routerName] ?? null;
+        });
       },
     );
   }
@@ -70,6 +74,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List<_Button> buttons = [
+    _Button('基础组件介绍', 'baseWidgets'),
+    _Button(' 输入框及表单', 'from_page'),
+  ];
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -126,23 +135,24 @@ class _MyHomePageState extends State<MyHomePage> {
                       textColor: Colors.blue,
                       onPressed: () {
                         Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                            return new Scaffold(
-                              appBar: new AppBar(
-                                title: new Text('新路由'),
-                              ),
-                              body: Center(
-                                child: Text('新路由的内容'*100),
-                              ),
-                            );
+                            MaterialPageRoute(builder: (context) {
+                          return new Scaffold(
+                            appBar: new AppBar(
+                              title: new Text('新路由'),
+                            ),
+                            body: Center(
+                              child: Text('新路由的内容' * 100),
+                            ),
+                          );
                         }));
                       },
                     ),
                     RaisedButton(
                       onPressed: () async {
                         // var result = await Navigator.pushNamed(context, 'new_page');
-                        var result = await Navigator.of(context).pushNamed('new_page2', arguments: '通过路由传参进入');
-                            
+                        var result = await Navigator.of(context)
+                            .pushNamed('new_page2', arguments: '通过路由传参进入');
+
                         print("路由返回值：$result");
                       },
                       child: Text("打开提示页"),
@@ -150,26 +160,25 @@ class _MyHomePageState extends State<MyHomePage> {
                     FlatButton(
                       child: Text('打开路由表中未注册路由'),
                       onPressed: () async {
-                        Navigator.pushNamed(
-                          context, 
-                          'shopCart'
-                        );
+                        Navigator.pushNamed(context, 'latex');
                       },
                     ),
                     FlatButton(
                       child: Text('打开路由表中注册路由'),
                       onPressed: () async {
-                        Navigator.pushNamed(
-                          context, 
-                          'new_page'
-                        );
+                        Navigator.pushNamed(context, 'new_page');
                       },
                     ),
-                    Image(
-                      image: NetworkImage(
-                          "https://avatars2.githubusercontent.com/u/20411648?s=460&v=4"),
-                      width: 200.0,
-                    ),
+                    Image.asset('assets/images/beach_hdr.jpg', width: 200,),
+                    ... this
+                        .buttons
+                        .map((button) => RaisedButton(
+                              child: new Text(button.title),
+                              onPressed: () async {
+                                Navigator.pushNamed(context, button.router);
+                              },
+                            ))
+                        .toList(),
                   ],
                 ),
               ))
@@ -184,4 +193,10 @@ class _MyHomePageState extends State<MyHomePage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+}
+
+class _Button {
+  String router;
+  String title;
+  _Button(this.title, this.router);
 }
