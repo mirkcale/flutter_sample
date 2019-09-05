@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sample/CounterRoute.dart';
+import 'package:flutter_sample/CustomScrollView.dart';
+import 'package:flutter_sample/FromRoute.dart';
+import 'package:flutter_sample/ListViewRoute.dart';
+import 'package:flutter_sample/ScrollController.dart';
 import 'package:flutter_sample/TipRoute.dart';
 import 'package:flutter_sample/BaseWidgets.dart';
 import 'package:flutter_sample/latex.dart';
@@ -47,6 +51,10 @@ class MyApp extends StatelessWidget {
           Map<String, Widget> routerMap = {
             'baseWidgets': BaseWidgets(),
             'latex': Latex(),
+            'formRoute': FromRoute(),
+            'listViewRoute': ListViewRoute(),
+            'customScrollViewTestRoute': CustomScrollViewTestRoute(),
+            'scrollNotificationTestRoute': ScrollNotificationTestRoute(),
           };
           return routerMap[routerName] ?? null;
         });
@@ -76,7 +84,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<_Button> buttons = [
     _Button('基础组件介绍', 'baseWidgets'),
-    _Button(' 输入框及表单', 'from_page'),
+    _Button('输入框和表单', 'formRoute'),
+    _Button('滚动组件', 'listViewRoute'),
+    _Button('CustomScrollView', 'customScrollViewTestRoute'),
+    _Button('滚动监听', 'scrollNotificationTestRoute'),
   ];
 
   @override
